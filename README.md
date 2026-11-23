@@ -6,6 +6,19 @@ Each camera stream executes as an independent `<ApexFlow>` procedure (`Image Sou
 
 ---
 
+## Screenshots
+
+### Counter Alerts — Real-Time AI Theft Triage & 2×3 Sequence Evidence
+![Counter Alerts View](docs/screenshots/counter_alerts.png)
+
+### Live Camera Grid — Multi-Stream Matrix & Per-Layer Overlays
+![Live Camera Grid View](docs/screenshots/live_camera_grid.png)
+
+### Admin Settings — Per-Camera RTSP Setup & Interactive ROI Canvas Editor
+![Admin Settings & ROI Editor](docs/screenshots/admin_roi_editor.png)
+
+---
+
 ## Key Features
 
 - **Apex Vision SDK Core Runtime:** Every camera executes through `apex_vision.sdk.ApexRuntimeEngine` (`runtime_data/storeguard.apex`), using shared ONNX Runtime sessions (`models/yolo11n-pose.onnx` + `models/yolo11n.onnx`) and dynamic micro-batching across streams.
@@ -65,26 +78,6 @@ dotnet build StoreGuard.sln -c Release
 
 # Launch StoreGuard (starts both the desktop app and the headless AI engine on 127.0.0.1:8700)
 .\Launch_StoreGuard.bat
-```
-
----
-
-## Low-VRAM GPU Tuning (e.g. GTX 1050 2 GB + Ryzen 5 3500)
-
-For 2 GB VRAM cards running 5–10 streams, use these settings under `"engine"` in `runtime_data/cameras.json`:
-
-```json
-"engine": {
-  "device": "auto",
-  "use_tensorrt": false,
-  "decode_backend": "opencv_cpu",
-  "target_fps": 6,
-  "idle_fps": 2.5,
-  "batch_max_size": 4,
-  "bag_infer_stride": 3,
-  "worker_threads": 4,
-  "ring_max_width": 960
-}
 ```
 
 ---
