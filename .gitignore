@@ -1,0 +1,25 @@
+# Build & IDE outputs
+bin/
+obj/
+.vs/
+TestResults/
+*.user
+*.suo
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+
+# Runtime state, live API keys & evidence
+runtime_data/*
+!runtime_data/cameras.example.json
+*.db
+*.db-wal
+*.db-shm
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db

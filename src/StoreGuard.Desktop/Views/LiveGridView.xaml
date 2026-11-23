@@ -1,0 +1,371 @@
+<UserControl x:Class="StoreGuard.Desktop.Views.LiveGridView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{DynamicResource AppBgBrush}">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Matrix Controls Bar + Inline Camera Visibility Checkboxes -->
+        <Border Grid.Row="0" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="14,10" Margin="0,0,0,12">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                        <Ellipse Width="8" Height="8" Fill="{DynamicResource OkBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding SelectionSummary}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text=" · Click a feed to enlarge" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"
+                                   Visibility="{Binding HasVisibleCameras, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0"
+                                    Visibility="{Binding HasMultiplePages, Converter={StaticResource BoolToVis}}">
+                            <Button Content="Prev" Style="{StaticResource BaseButtonStyle}" MinHeight="26" Padding="8,2" FontSize="11"
+                                    IsEnabled="{Binding CanGoPreviousPage}" Command="{Binding PreviousPageCommand}"/>
+                            <TextBlock Text="{Binding PageSummary}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" Margin="8,0"/>
+                            <Button Content="Next" Style="{StaticResource BaseButtonStyle}" MinHeight="26" Padding="8,2" FontSize="11"
+                                    IsEnabled="{Binding CanGoNextPage}" Command="{Binding NextPageCommand}"/>
+                        </StackPanel>
+                        <CheckBox Content="Live Overlays" IsChecked="{Binding ShowRoiOverlays}" Margin="0,0,14,0" VerticalAlignment="Center"
+                                  FontFamily="Segoe UI" FontSize="11.5" FontWeight="SemiBold"
+                                  ToolTip="Master toggle for all live bounding box and ROI overlays"/>
+                        <TextBlock Text="Grid Layout" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <Border Background="{DynamicResource InputBgBrush}" BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="3">
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Content="Auto" Style="{StaticResource SegmentedButtonStyle}" GroupName="MatrixSize"
+                                             IsChecked="{Binding IsLayoutAuto, Mode=OneWay}" Command="{Binding SetGridLayoutCommand}" CommandParameter="auto"/>
+                                <RadioButton Content="2x2" Style="{StaticResource SegmentedButtonStyle}" GroupName="MatrixSize"
+                                             IsChecked="{Binding IsCols2, Mode=OneWay}" Command="{Binding SetGridLayoutCommand}" CommandParameter="2"/>
+                                <RadioButton Content="3x3" Style="{StaticResource SegmentedButtonStyle}" GroupName="MatrixSize"
+                                             IsChecked="{Binding IsCols3, Mode=OneWay}" Command="{Binding SetGridLayoutCommand}" CommandParameter="3"/>
+                                <RadioButton Content="4x4" Style="{StaticResource SegmentedButtonStyle}" GroupName="MatrixSize"
+                                             IsChecked="{Binding IsCols4, Mode=OneWay}" Command="{Binding SetGridLayoutCommand}" CommandParameter="4"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Overlay Layers Filter Row -->
+                <Grid Margin="0,8,0,0" IsEnabled="{Binding ShowRoiOverlays}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Overlays:" FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <WrapPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <CheckBox IsChecked="{Binding ShowShelfOverlay}" Margin="0,2,14,2" VerticalAlignment="Center" ToolTip="Show Shelf ROI bounding boxes">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="7" Height="7" Fill="#FF8C00" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Shelf" FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding ShowAisleOverlay}" Margin="0,2,14,2" VerticalAlignment="Center" ToolTip="Show Aisle ROI bounding boxes">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="7" Height="7" Fill="#FFC319" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Aisle" FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding ShowPoseOverlay}" Margin="0,2,14,2" VerticalAlignment="Center" ToolTip="Show YOLOv11-Pose bounding box and 17-keypoint skeleton">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="7" Height="7" Fill="#78F582" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Pose" FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding ShowBotSortOverlay}" Margin="0,2,14,2" VerticalAlignment="Center" ToolTip="Show BoT-SORT tracked person box, Track ID, phase, and trail">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="7" Height="7" Fill="#10B981" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="BoT-SORT" FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding ShowBagsOverlay}" Margin="0,2,14,2" VerticalAlignment="Center" ToolTip="Show context object / bag detections (backpack, handbag, basket, cart)">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="7" Height="7" Fill="#EB50DC" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Bags" FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding ShowMotionOverlay}" Margin="0,2,6,2" VerticalAlignment="Center" ToolTip="Show Motion Gate active crop bounding box">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="7" Height="7" Fill="#23D2EB" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Motion" FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </CheckBox>
+                    </WrapPanel>
+                </Grid>
+
+                <!-- Camera Selector Checkboxes Row -->
+                <Grid Margin="0,8,0,0" Visibility="{Binding HasAnyCameras, Converter={StaticResource BoolToVis}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Cameras:" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"
+                               VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <ItemsControl Grid.Column="1" ItemsSource="{Binding AllTiles}" VerticalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Style="{StaticResource CameraChipCheckBoxStyle}"
+                                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                          Margin="0,2,6,2"
+                                          ToolTip="{Binding Name}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Ellipse Width="6" Height="6" Fill="{Binding State, Converter={StaticResource HealthToBrush}}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Name}" MaxWidth="180" TextTrimming="CharacterEllipsis" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0"
+                                Visibility="{Binding HasMultipleCameras, Converter={StaticResource BoolToVis}}">
+                        <Button Content="All" Style="{StaticResource BaseButtonStyle}" MinHeight="26" Padding="10,2" FontSize="11" Margin="0,0,4,0"
+                                Command="{Binding SelectAllCamerasCommand}"/>
+                        <Button Content="None" Style="{StaticResource BaseButtonStyle}" MinHeight="26" Padding="10,2" FontSize="11"
+                                Command="{Binding ClearSelectedCamerasCommand}"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Empty State: No Enabled Cameras -->
+        <Border Grid.Row="1" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="1" CornerRadius="12" Padding="24"
+                Visibility="{Binding HasAnyCameras, Converter={StaticResource InvertBoolToVis}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="No Enabled Cameras" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                <TextBlock Text="Configure your Uniview NVR channels or a test MP4 file in Admin Settings." FontSize="12" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,14"/>
+                <Button Content="Open Camera Setup" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Center"
+                        Command="{Binding DataContext.OpenCameraSetupCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Empty State: All Cameras Unchecked -->
+        <Border Grid.Row="1" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="1" CornerRadius="12" Padding="24"
+                Visibility="{Binding AllCamerasHidden, Converter={StaticResource BoolToVis}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="All Cameras Hidden" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                <TextBlock Text="Select one or more camera checkboxes above to display live streams." FontSize="12" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,14"/>
+                <Button Content="Show All Cameras" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Center"
+                        Command="{Binding SelectAllCamerasCommand}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Dynamic Aspect-Fit Camera Matrix -->
+        <Grid x:Name="GridViewportHost" Grid.Row="1" Loaded="GridViewportHost_Loaded" SizeChanged="GridViewportHost_SizeChanged">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding HasVisibleCameras}" Value="True"/>
+                                <Condition Binding="{Binding HasFocusedTile}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding VisibleTiles}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="{Binding DataContext.EffectiveColumns, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    MaxWidth="{Binding TileMaxWidth}"
+                                    Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource SubtleBorderBrush}"
+                                    BorderThickness="1" CornerRadius="8" Padding="8" ClipToBounds="True">
+                                <StackPanel>
+                                    <!-- Tile Header -->
+                                    <Grid Margin="2,0,2,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"
+                                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <Border Grid.Column="1" Background="{DynamicResource CardBgBrush}" BorderBrush="{DynamicResource SubtleBorderBrush}"
+                                                BorderThickness="1" CornerRadius="8" Padding="8,2">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Ellipse Width="7" Height="7" Fill="{Binding State, Converter={StaticResource HealthToBrush}}" Margin="0,0,6,0"/>
+                                                <TextBlock Text="{Binding StateBadge}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Aspect-Fit Clickable Video Frame -->
+                                    <Button Cursor="Hand" FocusVisualStyle="{x:Null}"
+                                            Command="{Binding DataContext.FocusTileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid>
+                                                    <Border x:Name="MediaBd"
+                                                            Width="{Binding TileMediaWidth}"
+                                                            Height="{Binding TileMediaHeight}"
+                                                            Background="{DynamicResource MediaBgBrush}"
+                                                            BorderBrush="{DynamicResource SubtleBorderBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="4"
+                                                            ClipToBounds="True">
+                                                        <Grid>
+                                                            <Image Source="{Binding SnapshotImage}" Stretch="Uniform" RenderOptions.BitmapScalingMode="Linear"/>
+                                                            <Border Background="#99090B0F"
+                                                                    Visibility="{Binding HasSnapshot, Converter={StaticResource InvertBoolToVis}}">
+                                                                <Border Background="{DynamicResource WarnTintBrush}" BorderBrush="{DynamicResource WarnBorderBrush}"
+                                                                        BorderThickness="1" CornerRadius="8" Padding="10,6"
+                                                                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
+                                                                    <TextBlock Text="{Binding OfflineMessage}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource WarnTextBrush}"
+                                                                               TextWrapping="Wrap" TextAlignment="Center"/>
+                                                                </Border>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border x:Name="FocusRing" BorderBrush="{DynamicResource FocusBorderBrush}" BorderThickness="2" CornerRadius="4" Visibility="Collapsed" IsHitTestVisible="False"/>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="MediaBd" Property="BorderBrush" Value="{DynamicResource FocusBorderBrush}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                                        <Setter TargetName="FocusRing" Property="Visibility" Value="Visible"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+
+                                    <!-- Local Clip Detection Footer (Status + Re-run button) -->
+                                    <Grid Margin="0,6,0,0" Visibility="{Binding ShowRerunButton, Converter={StaticResource BoolToVis}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" HorizontalAlignment="Left" CornerRadius="4" Padding="7,2" BorderThickness="1" VerticalAlignment="Center">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{DynamicResource OkTintBrush}"/>
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource OkBorderBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ClipDetectionDone}" Value="True">
+                                                            <Setter Property="Background" Value="{DynamicResource PrimaryTintBrush}"/>
+                                                            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBorderBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding DetectionModeBadge}" FontSize="11" FontWeight="SemiBold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="{DynamicResource OkTextBrush}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ClipDetectionDone}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                        <Button Grid.Column="1" Content="Re-run" Style="{StaticResource PrimaryButtonStyle}" MinHeight="24" Padding="10,2" FontSize="11"
+                                                Command="{Binding DataContext.RerunCameraCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                ToolTip="Restart local video from 0:00 and run detection pass again"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Focused Solo Camera View -->
+        <Border Grid.Row="1" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="1" CornerRadius="12" Padding="14"
+                Visibility="{Binding HasFocusedTile, Converter={StaticResource BoolToVis}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="Back to Grid" Style="{StaticResource BaseButtonStyle}" MinHeight="30" Padding="12,4" Margin="0,0,12,0"
+                            Command="{Binding ExitFocusCommand}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding FocusedTile.Name}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,12,0"/>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0"
+                                Visibility="{Binding FocusedTile.ShowRerunButton, Converter={StaticResource BoolToVis}}">
+                        <Border CornerRadius="6" Padding="8,4" BorderThickness="1" Margin="0,0,8,0" VerticalAlignment="Center">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="{DynamicResource OkTintBrush}"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource OkBorderBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding FocusedTile.ClipDetectionDone}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource PrimaryTintBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBorderBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding FocusedTile.DetectionModeBadge}" FontSize="11" FontWeight="SemiBold">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource OkTextBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding FocusedTile.ClipDetectionDone}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Border>
+                        <Button Content="Re-run Detection" Style="{StaticResource PrimaryButtonStyle}" MinHeight="30" Padding="12,4"
+                                Command="{Binding RerunCameraCommand}" CommandParameter="{Binding FocusedTile}"/>
+                    </StackPanel>
+                    <Border Grid.Column="3" Background="{DynamicResource CardBgBrush}" BorderBrush="{DynamicResource SubtleBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="7" Height="7" Fill="{Binding FocusedTile.State, Converter={StaticResource HealthToBrush}}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding FocusedTile.StateBadge}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                <Border Grid.Row="1" Background="{DynamicResource MediaBgBrush}" CornerRadius="8" ClipToBounds="True">
+                    <Grid>
+                        <Image Source="{Binding FocusedTile.SnapshotImage}" Stretch="Uniform" RenderOptions.BitmapScalingMode="Linear"/>
+                        <Border Background="#99090B0F"
+                                Visibility="{Binding FocusedTile.HasSnapshot, Converter={StaticResource InvertBoolToVis}}">
+                            <Border Background="{DynamicResource WarnTintBrush}" BorderBrush="{DynamicResource WarnBorderBrush}"
+                                    BorderThickness="1" CornerRadius="8" Padding="14,8"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding FocusedTile.OfflineMessage}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource WarnTextBrush}"/>
+                            </Border>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

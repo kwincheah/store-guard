@@ -1,0 +1,68 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Crisp Daylight Light Surfaces (Calibrated for WCAG AA >= 4.5:1 text & >= 3.0:1 UI boundaries) -->
+    <SolidColorBrush x:Key="AppBgBrush" Color="#F1F5F9"/>
+    <SolidColorBrush x:Key="SidebarBgBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="PanelBgBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="CardBgBrush" Color="#F8FAFC"/>
+    <SolidColorBrush x:Key="CardHoverBrush" Color="#EFF6FF"/>
+    <SolidColorBrush x:Key="InputBgBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="MediaBgBrush" Color="#0F172A"/>
+    <SolidColorBrush x:Key="AltRowBgBrush" Color="#F8FAFC"/>
+    <SolidColorBrush x:Key="SubtleBorderBrush" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="StrongBorderBrush" Color="#64748B"/>
+    <SolidColorBrush x:Key="FocusBorderBrush" Color="#0369A1"/>
+    <SolidColorBrush x:Key="ScrollTrackBrush" Color="#F1F5F9"/>
+    <SolidColorBrush x:Key="ScrollThumbBrush" Color="#CBD5E1"/>
+    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#94A3B8"/>
+
+    <!-- Typography Scale -->
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#0F172A"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#334155"/>
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#475569"/>
+    <SolidColorBrush x:Key="TextDisabledBrush" Color="#64748B"/>
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#090D16"/>
+    <SolidColorBrush x:Key="OnOkActionBrush" Color="#090D16"/>
+    <SolidColorBrush x:Key="OnDangerActionBrush" Color="#090D16"/>
+
+    <!-- Filled Neutral Buttons (Medium slate fill + crisp #090D16 black text = 12.8:1) -->
+    <SolidColorBrush x:Key="ButtonBgBrush" Color="#CBD5E1"/>
+    <SolidColorBrush x:Key="ButtonHoverBrush" Color="#94A3B8"/>
+    <SolidColorBrush x:Key="ButtonPressedBrush" Color="#7E8FA6"/>
+    <SolidColorBrush x:Key="ButtonBorderBrush" Color="#64748B"/>
+    <SolidColorBrush x:Key="ButtonFgBrush" Color="#090D16"/>
+
+    <!-- Primary Precision Sky Fill (#38BDF8 = 9.3:1 w/ #090D16 black text) -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="#38BDF8"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#7DD3FC"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#0EA5E9"/>
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="#0369A1"/>
+    <SolidColorBrush x:Key="PrimaryTintBrush" Color="#E0F2FE"/>
+    <SolidColorBrush x:Key="PrimaryBorderBrush" Color="#0284C7"/>
+
+    <!-- Semantic Accents (Medium saturated fills + #090D16 black text) -->
+    <SolidColorBrush x:Key="OkBrush" Color="#059669"/>
+    <SolidColorBrush x:Key="OkActionBrush" Color="#34D399"/>
+    <SolidColorBrush x:Key="OkHoverBrush" Color="#10B981"/>
+    <SolidColorBrush x:Key="OkPressedBrush" Color="#059669"/>
+    <SolidColorBrush x:Key="OkTextBrush" Color="#065F46"/>
+    <SolidColorBrush x:Key="OkTintBrush" Color="#DCFCE7"/>
+    <SolidColorBrush x:Key="OkBorderBrush" Color="#059669"/>
+
+    <SolidColorBrush x:Key="WarnBrush" Color="#D97706"/>
+    <SolidColorBrush x:Key="WarnTextBrush" Color="#92400E"/>
+    <SolidColorBrush x:Key="WarnTintBrush" Color="#FEF3C7"/>
+    <SolidColorBrush x:Key="WarnBorderBrush" Color="#FCD34D"/>
+
+    <SolidColorBrush x:Key="DangerBrush" Color="#E11D48"/>
+    <SolidColorBrush x:Key="DangerActionBrush" Color="#FB7185"/>
+    <SolidColorBrush x:Key="DangerHoverBrush" Color="#F43F5E"/>
+    <SolidColorBrush x:Key="DangerPressedBrush" Color="#FDA4AF"/>
+    <SolidColorBrush x:Key="DangerTextBrush" Color="#9F1239"/>
+    <SolidColorBrush x:Key="DangerTintBrush" Color="#FFE4E6"/>
+    <SolidColorBrush x:Key="DangerBorderBrush" Color="#BE123C"/>
+
+    <!-- ROI Canvas Overlays -->
+    <SolidColorBrush x:Key="ShelfBrush" Color="#C2410C"/>
+    <SolidColorBrush x:Key="AisleBrush" Color="#0369A1"/>
+</ResourceDictionary>

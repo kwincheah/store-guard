@@ -1,0 +1,46 @@
+{
+  "engine": {
+    "device": "auto",
+    "use_tensorrt": false,
+    "decode_backend": "auto",
+    "target_fps": 8,
+    "idle_fps": 3.0,
+    "batch_max_size": 4,
+    "worker_threads": 4,
+    "ring_max_width": 960,
+    "clip_pre_sec": 6,
+    "clip_post_sec": 4,
+    "retention_days": 30,
+    "max_evidence_gb": 20,
+    "evidence_dir": "runtime_data/evidence",
+    "models_dir": "models",
+    "pose_conf": 0.25,
+    "pose_model": "yolo11n-pose.onnx",
+    "bag_model": "yolo11n.onnx",
+    "bag_infer_stride": 3,
+    "vlm": {
+      "provider": "gemini",
+      "base_url": "",
+      "model_name": "gemini-2.5-flash",
+      "api_key": "",
+      "timeout_sec": 25,
+      "alert_threshold_pct": 65,
+      "use_native_video": true,
+      "video_fps": 2,
+      "max_sequence_frames": 14
+    }
+  },
+  "cameras": [
+    {
+      "camera_id": "cam_01",
+      "name": "Aisle 1",
+      "rtsp_url": "rtsp://admin:password@192.168.1.64:554/unicast/c1/s0/live",
+      "sub_stream_url": "rtsp://admin:password@192.168.1.64:554/unicast/c1/s1/live",
+      "enabled": true,
+      "dwell_sec": 3.0,
+      "release_wait_sec": 3.5,
+      "cooldown_sec": 12.0,
+      "zones": []
+    }
+  ]
+}
